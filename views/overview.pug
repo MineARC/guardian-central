@@ -19,14 +19,14 @@ block append content
                   th.sorting.col-xs-3 MAF Number
                 default
                   th.sorting.col-xs-3 MA Number
-              th.sorting.col-xs-3 Address
               th.sorting.col-xs-3 Type
+              th.sorting.col-xs-3 Last Seen
           tbody
             if(hosts)
               each host in hosts
                 tr.row
                   td
-                    a(href='//' + host.ip + '/chamber')= host.alias ? host.alias : 'blank'
+                    a(href='/chamber/' + host.name)= host.alias ? host.alias : 'blank'
                   td
                     if(host.alarms_total > 0)
                       div.dropdown
@@ -43,9 +43,7 @@ block append content
                         ul.alert.alert-info.col-xs-12.dropdown-menu
                           | Everything is fine
                   td
-                    = host.hostname.split('-')[1]
-                  td
-                    = host.ip
+                    = host.name.split('-')[1]
                   td
                     case host.type
                       when 0 
@@ -60,26 +58,30 @@ block append content
                         | Battery Box
                       default
                         | Unknown
+                  td
+                    = ((Date.now() - host.lastseen) / 1000).toFixed(0) + ' seconds'
+
 
 
 block append fleet
   if(hosts)
     each host in hosts
       li
-        a(href='//' + host.ip + '/chamber')
+        a(href='/chamber/' + host.name)
           i.icon-tag
-          span= host.alias ? host.alias : host.hostname.split('-')[1]
+          span= host.alias ? host.alias : host.name.split('-')[1]
 
 block append alerts
   if(hosts)
-    each host in hosts
+    each host in hosts 
+      = host.alarms_active
       each alerts, types in host.alarms_active
         each alert in alerts
           li.list-group-item
             .clear
               i.fa.fa-exclamation-circle.m-r-xs
               span.alef= alert
-            small.text-muted= host.alias ? host.alias : host.hostname.split('-')[1]
+            small.text-muted= host.alias ? host.alias : host.name.split('-')[1]
 
 block append styles
 

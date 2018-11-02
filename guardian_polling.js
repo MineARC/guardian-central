@@ -21,8 +21,8 @@ async function poll() {
         body = JSON.parse(body);
         if (body.guardian) {
           db.query(
-                'UPDATE guardians SET name = (?), alias = (?), type = (?), lastseen = now(), modules = (?) WHERE ip = (?)',
-                [body.hostname, body.alias, body.type, body.alarms_active, element.ip])
+                'UPDATE guardians SET name = (?), alias = (?), type = (?), lastseen = now(), alarms_total = (?), alarms_active = (?) WHERE ip = (?)',
+                [body.hostname, body.alias, body.type, body.alarms_total, body.alarms_active, element.ip])
               .then(res => {
                 console.log(res);
               })

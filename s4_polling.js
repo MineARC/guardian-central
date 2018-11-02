@@ -25,10 +25,8 @@ async function poll() {
         body = JSON.parse(body);
         if (body.series4) {
           db.query(
-                'INSERT INTO s4_data VALUES ((SELECT name FROM guardians WHERE ip = ?), now())',
-                [
-                  element.ip
-                ])
+                'INSERT INTO s4_data VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
+                [element.ip, body.series4])
               .then(res => {
                 console.log(res);
               })

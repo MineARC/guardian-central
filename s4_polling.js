@@ -1,4 +1,5 @@
 var request = require('request');
+var aura_polling = require('./aura_polling');
 var cams_polling = require('./cams_polling');
 var db = require('./database');
 
@@ -25,7 +26,7 @@ async function poll() {
         body = JSON.parse(body);
         if (body.series4) {
           db.query(
-                'INSERT INTO s4_data VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
+                'INSERT INTO s4_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
                 [element.ip, body.series4])
               .then(res => {
                 console.log(res);
@@ -35,7 +36,10 @@ async function poll() {
               });
         }
         if (body.cams) {
-          cams_polling(db, body.cams);
+          cams_polling(db, element.ip, body.cams);
+        }
+        if (body.aura) {
+          aura_polling(db, element.ip, body.aura);
         }
       }
     });

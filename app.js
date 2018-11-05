@@ -1,6 +1,5 @@
 var express = require('express');
 var app = express();
-module.exports = app;
 
 // ///// UPDATE /////
 // var AutoUpdater = require('auto-updater');
@@ -77,8 +76,11 @@ var logger = require('morgan');
 var compression = require('compression');
 var cors = require('cors');
 
-var dashboard = require('./routes/overview');
+var overview = require('./routes/overview');
 var chamber = require('./routes/chamber');
+var hosts_api = require('./routes/hosts_api');
+var monitor_api = require('./routes/monitor_api');
+var camera_api = require('./routes/camera_api');
 
 var database = require('./database');
 var guardian_polling = require('./guardian_polling');
@@ -103,8 +105,11 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', dashboard);
+app.use('/', overview);
 app.use('/chamber', chamber);
+app.use('/api/hosts', hosts_api);
+app.use('/api/monitor', monitor_api);
+app.use('/api/camera', camera_api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -122,3 +127,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 // }
+
+module.exports = app;

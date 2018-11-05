@@ -1,4 +1,5 @@
 var request = require('request');
+var aura_polling = require('./aura_polling');
 var cams_polling = require('./cams_polling');
 var db = require('./database');
 
@@ -25,11 +26,11 @@ async function poll() {
         body = JSON.parse(body);
         if (body.elv) {
           db.query(
-                'INSERT INTO elv_data VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?, ?, ?, ?, ?, ?)',
+                'INSERT INTO elv_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
                 [
-                  element.ip, body.elv.mains, body.elv.inverter,
-                  body.elv.serial.V, body.elv.serial.I, body.elv.serial.P,
-                  body.elv.serial.CE
+                  element.ip, body.elv /*body.elv.mains, body.elv.inverter,
+                   body.elv.serial.V, body.elv.serial.I, body.elv.serial.P,
+                   body.elv.serial.CE*/
                 ])
               .then(res => {
                 console.log(res);
@@ -39,7 +40,10 @@ async function poll() {
               });
         }
         if (body.cams) {
-          cams_polling(db, body.cams);
+          cams_polling(db, element.ip, body.cams);
+        }
+        if (body.aura) {
+          aura_polling(db, element.ip, body.aura);
         }
       }
     });

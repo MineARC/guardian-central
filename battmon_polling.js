@@ -1,4 +1,5 @@
 var request = require('request');
+var aura_polling = require('./aura_polling');
 var cams_polling = require('./cams_polling');
 var db = require('./database');
 
@@ -25,8 +26,11 @@ async function poll() {
         body = JSON.parse(body);
         if (body.battmon) {
           db.query(
-                'INSERT INTO battmon_data VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?, ?)',
-                [element.ip, body.Bank, body.Balance])
+                'INSERT INTO battmon_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
+                [
+                  element.ip,
+                  body.battmon /*body.battmon.Bank, body.battmon.Balance*/
+                ])
               .then(res => {
                 console.log(res);
               })
@@ -35,7 +39,10 @@ async function poll() {
               });
         }
         if (body.cams) {
-          cams_polling(db, body.cams);
+          cams_polling(db, element.ip, body.cams);
+        }
+        if (body.aura) {
+          aura_polling(db, element.ip, body.aura);
         }
       }
     });

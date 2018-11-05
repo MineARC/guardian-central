@@ -1,4 +1,4 @@
-$(document).ready(function ($) {
+$(document).ready(function($) {
   var external_showing = $('#external');
   var timeout;
   var timestamp = Date.now();
@@ -8,12 +8,15 @@ $(document).ready(function ($) {
 
   function update_external_image() {
     if (timestamp + 1000 <= Date.now()) {
-      external_showing.attr('src', '/api/camera/external?' + Math.floor(Date.now() / 1000));
+      external_showing.attr(
+          'src',
+          '/api/camera/external/' +
+              window.location.pathname.split('/').slice(-1)[0] + '?' +
+              Math.floor(Date.now() / 1000));
       clearTimeout(timeout);
       timeout = setTimeout(update_external_image, 20000);
       timestamp = Date.now();
-    }
-    else {
+    } else {
       setTimeout(update_external_image, Date.now - timestamp + 1000);
     }
   }

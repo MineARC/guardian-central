@@ -1,5 +1,7 @@
 var dataLength = 8630; // number of dataPoints visible at any point
 
+var name = window.location.pathname.split('/').slice(-1)[0];
+
 $(document).ready(function($) {
   $('#alias').editable({
     type : 'text',
@@ -23,7 +25,7 @@ $(document).ready(function($) {
 //   $('#alarms').html(html);
 // }
 
-$.get('/api/monitor/history').then(function(data) {
+$.get('/api/monitor/history/' + name).then(function(data) {
   if (data.elv)
     updateELVHistory(data.elv);
   if (data.elvp)
@@ -41,7 +43,7 @@ $.get('/api/monitor/history').then(function(data) {
 setInterval(updatefromapi, 10000);
 
 function updatefromapi() {
-  $.get('/api/monitor/').then(function(data) {
+  $.get('/api/monitor/' + name).then(function(data) {
     if (data.elv)
       updateELV(data.elv);
     if (data.elvp)

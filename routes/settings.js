@@ -1,6 +1,4 @@
 var express = require('express');
-var jumpers = require('../jumpers');
-var alias = require('../alias');
 var router = express.Router();
 
 router.post('/setAlias', function (req, res, next) {

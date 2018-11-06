@@ -1,8 +1,6 @@
 var express = require('express');
-var hostdiscovery = require('../hostdiscovery');
-var jumpers = require('../jumpers');
-var alias = require('../alias');
 var router = express.Router();
+var db = require('../database');
 
 router.get('/', function (req, res, next) {
   var data = {};

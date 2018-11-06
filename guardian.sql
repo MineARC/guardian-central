@@ -19,9 +19,9 @@ USE `guardian`;
 -- Dumping structure for table guardian.alarms
 CREATE TABLE IF NOT EXISTS `alarms` (
   `guardian` varchar(50) DEFAULT NULL,
+  `sent` timestamp NULL DEFAULT NULL,
   `email` text DEFAULT NULL,
   `type` text DEFAULT NULL,
-  `sent` timestamp NULL DEFAULT NULL,
   KEY `FK_alarms_guardians` (`guardian`),
   CONSTRAINT `FK_alarms_guardians` FOREIGN KEY (`guardian`) REFERENCES `guardians` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS `alarms` (
 -- Dumping structure for table guardian.aura_data
 CREATE TABLE IF NOT EXISTS `aura_data` (
   `guardian` varchar(50) DEFAULT NULL,
+  `time` timestamp NULL DEFAULT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `co2` float DEFAULT NULL,
   `o2` float DEFAULT NULL,
   `temp` float DEFAULT NULL,
@@ -42,7 +44,10 @@ CREATE TABLE IF NOT EXISTS `aura_data` (
 -- Dumping structure for table guardian.battmon_data
 CREATE TABLE IF NOT EXISTS `battmon_data` (
   `guardian` varchar(50) DEFAULT NULL,
-  `data` blob DEFAULT NULL,
+  `time` timestamp NULL DEFAULT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `bank` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `balance` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   KEY `FK_battmon_data_guardians` (`guardian`),
   CONSTRAINT `FK_battmon_data_guardians` FOREIGN KEY (`guardian`) REFERENCES `guardians` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -51,7 +56,11 @@ CREATE TABLE IF NOT EXISTS `battmon_data` (
 -- Dumping structure for table guardian.cams_data
 CREATE TABLE IF NOT EXISTS `cams_data` (
   `guardian` varchar(50) DEFAULT NULL,
-  `data` blob DEFAULT NULL,
+  `time` timestamp NULL DEFAULT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `occupied` tinyint(1) DEFAULT NULL,
+  `solenoid` tinyint(1) DEFAULT NULL,
+  `rate` float DEFAULT NULL,
   KEY `FK_cams_data_guardians` (`guardian`),
   CONSTRAINT `FK_cams_data_guardians` FOREIGN KEY (`guardian`) REFERENCES `guardians` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -60,6 +69,8 @@ CREATE TABLE IF NOT EXISTS `cams_data` (
 -- Dumping structure for table guardian.elvp_data
 CREATE TABLE IF NOT EXISTS `elvp_data` (
   `guardian` varchar(50) DEFAULT NULL,
+  `time` timestamp NULL DEFAULT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `mains present` tinyint(1) DEFAULT NULL,
   `inverter output` tinyint(1) DEFAULT NULL,
   `emergency bank voltage` float DEFAULT NULL,
@@ -75,6 +86,8 @@ CREATE TABLE IF NOT EXISTS `elvp_data` (
 -- Dumping structure for table guardian.elv_data
 CREATE TABLE IF NOT EXISTS `elv_data` (
   `guardian` varchar(50) DEFAULT NULL,
+  `time` timestamp NULL DEFAULT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `mains present` tinyint(1) DEFAULT NULL,
   `inverter output` tinyint(1) DEFAULT NULL,
   `emergency bank voltage` float DEFAULT NULL,
@@ -89,28 +102,33 @@ CREATE TABLE IF NOT EXISTS `elv_data` (
 -- Dumping structure for table guardian.guardians
 CREATE TABLE IF NOT EXISTS `guardians` (
   `name` varchar(50) NOT NULL,
+  `lastseen` timestamp NULL DEFAULT NULL,
+  `type` tinyint(4) DEFAULT NULL,
   `alias` text DEFAULT NULL,
-  `lastseen` datetime DEFAULT NULL,
-  PRIMARY KEY (`name`)
+  `ip` varchar(16) DEFAULT NULL,
+  `alarms_total` int(11) NOT NULL DEFAULT 0,
+  `alarms_active` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '{}',
+  PRIMARY KEY (`name`),
+  UNIQUE KEY `ip` (`ip`),
+  KEY `FK_guardians_guardian_types` (`type`),
+  CONSTRAINT `FK_guardians_guardian types` FOREIGN KEY (`type`) REFERENCES `guardian_types` (`index`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table guardian.guardian_types
+CREATE TABLE IF NOT EXISTS `guardian_types` (
+  `index` tinyint(4) NOT NULL,
+  `nickname` varchar(50) DEFAULT NULL,
+  `label` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 -- Dumping structure for table guardian.s3_data
 CREATE TABLE IF NOT EXISTS `s3_data` (
   `guardian` varchar(50) DEFAULT NULL,
-  `chamber temperature` float DEFAULT NULL,
-  `co2 fan current` float DEFAULT NULL,
-  `outside temperature` float DEFAULT NULL,
-  `co fan current` float DEFAULT NULL,
-  `battery temperature` float DEFAULT NULL,
-  `siren current` float DEFAULT NULL,
-  `inverter voltage` float DEFAULT NULL,
-  `fluoro current` float DEFAULT NULL,
-  `battery current` float DEFAULT NULL,
-  `green strobe current` float DEFAULT NULL,
-  `battery voltage` float DEFAULT NULL,
-  `red strobe current` float DEFAULT NULL,
-  `bridge voltage` float DEFAULT NULL,
+  `time` timestamp NULL DEFAULT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   KEY `FK_s3_data_guardians` (`guardian`),
   CONSTRAINT `FK_s3_data_guardians` FOREIGN KEY (`guardian`) REFERENCES `guardians` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -119,21 +137,8 @@ CREATE TABLE IF NOT EXISTS `s3_data` (
 -- Dumping structure for table guardian.s4_data
 CREATE TABLE IF NOT EXISTS `s4_data` (
   `guardian` varchar(50) DEFAULT NULL,
-  `co2 fan 1 current` float DEFAULT NULL,
-  `co2 fan 2 current` float DEFAULT NULL,
-  `co fan current` float DEFAULT NULL,
-  `lighting current` float DEFAULT NULL,
-  `siren current` float DEFAULT NULL,
-  `green strobe current` float DEFAULT NULL,
-  `red strobe current` float DEFAULT NULL,
-  `yellow strobe current` float DEFAULT NULL,
-  `mains voltage` float DEFAULT NULL,
-  `battery voltage` float DEFAULT NULL,
-  `inverter voltage` float DEFAULT NULL,
-  `battery current` float DEFAULT NULL,
-  `battery temperature` float DEFAULT NULL,
-  `chamber temperature` float DEFAULT NULL,
-  `outside temperature` float DEFAULT NULL,
+  `time` timestamp NULL DEFAULT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   KEY `FK_s4_data_guardians` (`guardian`),
   CONSTRAINT `FK_s4_data_guardians` FOREIGN KEY (`guardian`) REFERENCES `guardians` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

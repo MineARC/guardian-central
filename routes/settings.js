@@ -3,7 +3,15 @@ var router = express.Router();
 var db = require('../database');
 
 router.get('/', function(req, res, next) {
-  res.render('notifications', data);
+  var data = {};
+  db.query('SELECT * FROM guardians')
+      .then(rows => {
+        data['hosts'] = rows;
+        res.render('settings', data);
+      })
+      .catch(err => {
+        console.log('error: ' + err);
+      });
 });
 
 router.post('/addGuardian', function(req, res, next) {

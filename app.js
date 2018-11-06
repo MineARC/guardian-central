@@ -82,7 +82,6 @@ var hosts_api = require('./routes/hosts_api');
 var monitor_api = require('./routes/monitor_api');
 var camera_api = require('./routes/camera_api');
 
-var database = require('./database');
 var guardian_polling = require('./guardian_polling');
 var battmon_polling = require('./battmon_polling');
 var elv_polling = require('./elv_polling');

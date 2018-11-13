@@ -82,6 +82,7 @@ var hosts_api = require('./routes/hosts_api');
 var monitor_api = require('./routes/monitor_api');
 var camera_api = require('./routes/camera_api');
 var settings = require('./routes/settings');
+var contact = require('./routes/contact');
 
 var guardian_polling = require('./guardian_polling');
 var battmon_polling = require('./battmon_polling');
@@ -111,6 +112,7 @@ app.use('/api/hosts', hosts_api);
 app.use('/api/monitor', monitor_api);
 app.use('/api/camera', camera_api);
 app.use('/settings', settings);
+app.use('/contact', contact);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

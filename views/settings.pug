@@ -5,37 +5,34 @@ block title
 
 block append content
   .wrapper-md
-    ul#settings-list.list-group.gutter.list-group-lg.list-group-sp(ui-jq='sortable')&attributes(ips)
-      each email in emails
-        li.list-group-item(draggable='true', style='display: block;')
-          span.pull-left
-            i.fa.fa-sort.text-muted.fa.m-r-sm
-          span.pull-right
-            button.btn.btn-default2.btn-xs.btn-delete(data-email=email)
-              i.fa.fa-fw.m-r.xs.fa-minus
-            .btn-group.dropdown
-              button.btn.btn-default2.btn-xs(data-toggle='dropdown')
-                i.fa.fa-fw.m-r-xs.fa-plus
-              ul.alert.alert-default.dropdown-menu.dropdown-menu-right
-                li
-                  .checkbox
-                    label
-                      input.check_all(type='checkbox')
-                      | All
-                each host in hosts
-                  li
-                    .checkbox
-                      label
-                        input.subscription(type='checkbox', data-target=host.ip, data-email=email, checked=((host.emails||[]).indexOf(email) != -1))
-                        =host.alias ? host.alias : host.hostname.split('-')[1]
-          .clear
-            =email
-    div.pull-right
-      button#btn-save.btn.m-b-xs.w-xs.btn-success
-        | Save
+    .panel.panel-default
+      .table-responsive
+        table#settings-list.table.dataTable.display(ui-options='{ paging: false }', role='grid')
+          thead
+            tr.row
+              th.sorting.col-xs-3 IP Address
+              th.sorting.col-xs-3 Alias
+              th.sorting.col-xs-3 Hostname
+              th.sorting.col-xs-3 Last Seen
+              th.sorting.col-xs-3 Remove
+          tbody
+            if(hosts)
+              each host in hosts
+                tr.row
+                  td
+                    =host.ip
+                  td
+                    =host.alias
+                  td
+                    =host.hostname
+                  td
+                    = ((Date.now() - host.lastseen) / 1000).toFixed(0) + ' seconds'
+                  td
+                    button.btn.btn-default2.btn-s.btn-delete(data-ip=host.ip)
+                      i.fa.fa-trash
     div
       form#form-add.input-group
-        input.form-control(type='text' placeholder='example@example.com')
+        input.form-control(type='text' placeholder='127.0.0.1')
         span.input-group-btn
           button#btn-add.btn.btn-info(type='button')
             | Add

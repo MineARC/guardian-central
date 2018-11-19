@@ -2,8 +2,8 @@
   "name": "guardian-central",
   "version": "1.0.0",
   "auto-updater": {
-    "repo": "MineARC/guardian",
-    "branch": "guardian-central"
+    "repo": "MineARC/guardian-central",
+    "branch": "master"
   },
   "private": false,
   "scripts": {

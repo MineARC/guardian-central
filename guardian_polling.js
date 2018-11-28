@@ -18,17 +18,28 @@ async function poll() {
       if (err) {
         console.log('error: ' + err);
       } else if (res && res.statusCode) {
-        body = JSON.parse(body);
-        if (body.guardian) {
-          db.query(
-                'UPDATE guardians SET name = (?), alias = (?), type = (?), lastseen = now(), alarms_total = (?), alarms_active = (?) WHERE ip = (?)',
-                [body.hostname, body.alias, body.type, body.alarms_total, body.alarms_active, element.ip])
-              .then(res => {
-                console.log(res);
-              })
-              .catch(err => {
-                console.log('error: ' + err);
-              });
+        var validJSON = false;
+        try {
+          body = JSON.parse(body);
+          validJSON = true;
+        } catch (e) {
+          // JSON Error
+        }
+        if (validJSON) {
+          if (body.guardian) {
+            db.query(
+                  'UPDATE guardians SET name = (?), alias = (?), type = (?), lastseen = now(), alarms_total = (?), alarms_active = (?) WHERE ip = (?)',
+                  [
+                    body.hostname, body.alias, body.type, body.alarms_total,
+                    body.alarms_active, element.ip
+                  ])
+                .then(res => {
+                  console.log(res);
+                })
+                .catch(err => {
+                  console.log('error: ' + err);
+                });
+          }
         }
       }
     });

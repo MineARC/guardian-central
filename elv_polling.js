@@ -23,27 +23,35 @@ async function poll() {
       if (err) {
         console.log('error: ' + err);
       } else if (res && res.statusCode) {
-        body = JSON.parse(body);
-        if (body.elv) {
-          db.query(
-                'INSERT INTO elv_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
-                [
-                  element.ip, body.elv /*body.elv.mains, body.elv.inverter,
-                   body.elv.serial.V, body.elv.serial.I, body.elv.serial.P,
-                   body.elv.serial.CE*/
-                ])
-              .then(res => {
-                console.log(res);
-              })
-              .catch(err => {
-                console.log('error: ' + err);
-              });
+        var validJSON = false;
+        try {
+          body = JSON.parse(body);
+          validJSON = true;
+        } catch (e) {
+          // JSON Error
         }
-        if (body.cams) {
-          cams_polling(db, element.ip, body.cams);
-        }
-        if (body.aura) {
-          aura_polling(db, element.ip, body.aura);
+        if (validJSON) {
+          if (body.elv) {
+            db.query(
+                  'INSERT INTO elv_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
+                  [
+                    element.ip, body.elv /*body.elv.mains, body.elv.inverter,
+                     body.elv.serial.V, body.elv.serial.I, body.elv.serial.P,
+                     body.elv.serial.CE*/
+                  ])
+                .then(res => {
+                  console.log(res);
+                })
+                .catch(err => {
+                  console.log('error: ' + err);
+                });
+          }
+          if (body.cams) {
+            cams_polling(db, element.ip, body.cams);
+          }
+          if (body.aura) {
+            aura_polling(db, element.ip, body.aura);
+          }
         }
       }
     });

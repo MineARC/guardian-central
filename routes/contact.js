@@ -17,8 +17,13 @@ router.get('/', function(req, res, next) {
             alias: row.alias,
             type: row.type,
             alarms_total: row.alarms_total,
-            alarms_active: JSON.parse(row.alarms_active)
+            alarms_active: {}
           };
+          try {
+            data['hosts'][index].alarms_active = JSON.parse(row.alarms_active);
+          } catch (e) {
+            // JSON Error
+          }
         }
         res.render('contact', data);
       })

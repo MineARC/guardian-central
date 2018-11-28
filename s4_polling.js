@@ -23,23 +23,31 @@ async function poll() {
       if (err) {
         console.log('error: ' + err);
       } else if (res && res.statusCode) {
-        body = JSON.parse(body);
-        if (body.series4) {
-          db.query(
-                'INSERT INTO s4_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
-                [element.ip, body.series4])
-              .then(res => {
-                console.log(res);
-              })
-              .catch(err => {
-                console.log('error: ' + err);
-              });
+        var validJSON = false;
+        try {
+          body = JSON.parse(body);
+          validJSON = true;
+        } catch (e) {
+          // JSON Error
         }
-        if (body.cams) {
-          cams_polling(db, element.ip, body.cams);
-        }
-        if (body.aura) {
-          aura_polling(db, element.ip, body.aura);
+        if (validJSON) {
+          if (body.series4) {
+            db.query(
+                  'INSERT INTO s4_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
+                  [element.ip, body.series4])
+                .then(res => {
+                  console.log(res);
+                })
+                .catch(err => {
+                  console.log('error: ' + err);
+                });
+          }
+          if (body.cams) {
+            cams_polling(db, element.ip, body.cams);
+          }
+          if (body.aura) {
+            aura_polling(db, element.ip, body.aura);
+          }
         }
       }
     });

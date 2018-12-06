@@ -17,14 +17,16 @@ var app = express();
 // // State the events
 // autoupdater.on('git-clone', function() {
 //   console.log(
-//       'You have a clone of the repository. Use \'git pull\' to be up-to-date');
+//       'You have a clone of the repository. Use \'git pull\' to be
+//       up-to-date');
 // });
 // autoupdater.on('check.up-to-date', function(v) {
 //   console.info('You have the latest version: ' + v);
 // });
 // autoupdater.on('check.out-dated', function(v_old, v) {
 //   console.warn('Your version is outdated. ' + v_old + ' of ' + v);
-//   autoupdater.fire('download-update');  // If autoupdate: false, you'll have to
+//   autoupdater.fire('download-update');  // If autoupdate: false, you'll have
+//   to
 //                                         // do this manually.
 //   // Maybe ask if the'd like to download the update.
 // });
@@ -34,8 +36,8 @@ var app = express();
 //       'extract');  // If autoupdate: false, you'll have to do this manually.
 // });
 // autoupdater.on('update.not-installed', function() {
-//   console.log('The Update was already in your folder! It\'s read for install');
-//   autoupdater.fire(
+//   console.log('The Update was already in your folder! It\'s read for
+//   install'); autoupdater.fire(
 //       'extract');  // If autoupdate: false, you'll have to do this manually.
 // });
 // autoupdater.on('update.extracted', function() {
@@ -105,6 +107,37 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get((req, res, next) => {
+  var hosts = {};
+  db.query('SELECT * FROM guardians')
+      .then(rows => {
+        for (var index = 0; index < rows.length; index++) {
+          var row = rows[index];
+          hosts[index] = {
+            guardian: true,
+            ip: row.ip,
+            hostname: row.name,
+            alias: row.alias,
+            type: row.type,
+            alarms_total: row.alarms_total,
+            alarms_active: {},
+            lastseen: row.lastseen
+          };
+          try {
+            hosts[index].alarms_active = JSON.parse(row.alarms_active);
+          } catch (e) {
+            // JSON Error
+          }
+        }
+        res.locals.hosts = hosts;
+        next();
+      })
+      .catch(err => {
+        console.log('error: ' + err);
+        next();
+      });
+})
 
 app.use('/', overview);
 app.use('/chamber', chamber);

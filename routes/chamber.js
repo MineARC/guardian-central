@@ -9,32 +9,6 @@ router.get('/:guardian_id', function(req, res, next) {
         data['alias'] = id[0].alias;
         data['localize'] = 'au';
 
-        var hostsPromise = db.query('SELECT * FROM guardians');
-        hostsPromise
-            .then(rows => {
-              data['hosts'] = {};
-              for (var index = 0; index < rows.length; index++) {
-                var row = rows[index];
-                data['hosts'][index] = {
-                  guardian: true,
-                  hostname: row.name,
-                  alias: row.alias,
-                  type: row.type,
-                  alarms_total: row.alarms_total,
-                  alarms_active: {}
-                };
-                try {
-                  data['hosts'][index].alarms_active =
-                      JSON.parse(row.alarms_active);
-                } catch (e) {
-                  // JSON Error
-                }
-              }
-            })
-            .catch(err => {
-              console.log('error: ' + err);
-            });
-
         var auraPromise = db.query(
             'SELECT * FROM aura_data WHERE guardian = ? ORDER BY time DESC LIMIT 1;',
             req.params.guardian_id);
@@ -124,7 +98,7 @@ router.get('/:guardian_id', function(req, res, next) {
                 });
             break;
         }
-        Promise.all([auraPromise, camsPromise, hostsPromise, dataPromise])
+        Promise.all([auraPromise, camsPromise, dataPromise])
             .then(values => {
               res.render('home', data);
             });

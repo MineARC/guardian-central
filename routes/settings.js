@@ -3,35 +3,7 @@ var router = express.Router();
 var db = require('../database');
 
 router.get('/', function(req, res, next) {
-  var data = {};
-  db.query('SELECT * FROM guardians')
-  var hostsPromise = db.query('SELECT * FROM guardians');
-  hostsPromise
-      .then(rows => {
-        data['hosts'] = {};
-        for (var index = 0; index < rows.length; index++) {
-          var row = rows[index];
-          data['hosts'][index] = {
-            guardian: true,
-            ip: row.ip,
-            hostname: row.name,
-            alias: row.alias,
-            type: row.type,
-            alarms_total: row.alarms_total,
-            alarms_active: {},
-            lastseen: row.lastseen
-          };
-          try {
-            data['hosts'][index].alarms_active = JSON.parse(row.alarms_active);
-          } catch (e) {
-            // JSON Error
-          }
-        }
-        res.render('settings', data);
-      })
-      .catch(err => {
-        console.log('error: ' + err);
-      });
+  res.render('settings');
 });
 
 router.post('/addGuardian', function(req, res, next) {

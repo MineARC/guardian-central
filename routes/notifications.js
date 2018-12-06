@@ -30,7 +30,6 @@ router.get('/', function (req, res, next) {
   }, this);
   emails = underscore.uniq(emails);
   data['emails'] = emails;
-  data['hosts'] = hostdiscovery.hosts_data;
   data['ips'] = { ips: [] };
   hostdiscovery.hosts_data.forEach(function (element) {
     data['ips']['ips'].push(element.ip);

@@ -44,7 +44,7 @@ block append fleet
   if(hosts)
     each host in hosts
       li
-        a(href='/chamber/' + host.name)
+        a(href='/chamber/' + host.hostname)
           i.icon-tag
           span= host.alias ? host.alias : host.hostname.split('-')[1]
 

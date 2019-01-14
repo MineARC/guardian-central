@@ -26,7 +26,7 @@ block append content
               each host in hosts
                 tr.row
                   td
-                    a(href='/chamber/' + host.name)= host.alias ? host.alias : 'blank'
+                    a(href='/chamber/' + host.hostname)= host.alias ? host.alias : 'blank'
                   td
                     if(host.alarms_total > 0)
                       div.dropdown
@@ -43,7 +43,7 @@ block append content
                         ul.alert.alert-info.col-xs-12.dropdown-menu
                           | Everything is fine
                   td
-                    = host.name.split('-')[1]
+                    = host.hostname.split('-')[1]
                   td
                     case host.type
                       when 0 
@@ -67,9 +67,9 @@ block append fleet
   if(hosts)
     each host in hosts
       li
-        a(href='/chamber/' + host.name)
+        a(href='/chamber/' + host.hostname)
           i.icon-tag
-          span= host.alias ? host.alias : host.name.split('-')[1]
+          span= host.alias ? host.alias : host.hostname.split('-')[1]
 
 block append alerts
   if(hosts)
@@ -81,7 +81,7 @@ block append alerts
             .clear
               i.fa.fa-exclamation-circle.m-r-xs
               span.alef= alert
-            small.text-muted= host.alias ? host.alias : host.name.split('-')[1]
+            small.text-muted= host.alias ? host.alias : host.hostname.split('-')[1]
 
 block append styles
 

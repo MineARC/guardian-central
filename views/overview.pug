@@ -74,7 +74,6 @@ block append fleet
 block append alerts
   if(hosts)
     each host in hosts 
-      = host.alarms_active
       each alerts, types in host.alarms_active
         each alert in alerts
           li.list-group-item

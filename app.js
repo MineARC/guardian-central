@@ -92,6 +92,7 @@ var elv_polling = require('./elv_polling');
 var elvp_polling = require('./elvp_polling');
 var s3_polling = require('./s3_polling');
 var s4_polling = require('./s4_polling');
+var db = require('./database');
 
 app.use(cors());
 app.options('*', cors());
@@ -108,7 +109,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get((req, res, next) => {
+app.get('*', (req, res, next) => {
   var hosts = {};
   db.query('SELECT * FROM guardians')
       .then(rows => {
@@ -137,7 +138,7 @@ app.get((req, res, next) => {
         console.log('error: ' + err);
         next();
       });
-})
+});
 
 app.use('/', overview);
 app.use('/chamber', chamber);

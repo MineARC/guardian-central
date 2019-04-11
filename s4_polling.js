@@ -7,49 +7,48 @@ setInterval(poll, 30000);
 poll();
 
 async function poll() {
-  var rows =
-      await db
-          .query(
-              'SELECT * FROM guardians g JOIN guardian_types gt ON g.type = gt.index WHERE nickname LIKE "s4"')
-          .then(rows => {
-            return rows;
-          })
-          .catch(err => {
-            console.log('error: ' + err);
-          });
+  db.getConnection()
+      .then(conn => {
+        conn.query('SELECT * FROM guardians g JOIN guardian_types gt ON g.type = gt.index WHERE nickname LIKE "s4"')
+            .then(rows => { rows.forEach(element => { single(element); }); })
+            .catch(console.log)
+            .then(conn.end);
+      })
+      .catch(console.log);
+}
 
-  rows.forEach(element => {
-    request.get('http://' + element.ip + '/api/monitor', function(err, res, body) {
-      if (err) {
-        console.log('error: ' + err);
-      } else if (res && res.statusCode) {
-        var validJSON = false;
-        try {
-          body = JSON.parse(body);
-          validJSON = true;
-        } catch (e) {
-          // JSON Error
+function single(element) {
+  request.get('http://' + element.ip + '/api/monitor', function(err, res, body) {
+    if (err) {
+      console.log('error: ' + err);
+    } else if (res && res.statusCode) {
+      var validJSON = false;
+      try {
+        body = JSON.parse(body);
+        validJSON = true;
+      } catch (e) {
+        // JSON Error
+      }
+      if (validJSON) {
+        if (body.series4) {
+
+          db.getConnection()
+              .then(conn => {
+                conn.query('INSERT INTO s4_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
+                           [ element.ip, body.series4 ])
+                    .then(console.log)
+                    .catch(console.log)
+                    .then(conn.end);
+              })
+              .catch(console.log);
         }
-        if (validJSON) {
-          if (body.series4) {
-            db.query(
-                  'INSERT INTO s4_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
-                  [element.ip, body.series4])
-                .then(res => {
-                  console.log(res);
-                })
-                .catch(err => {
-                  console.log('error: ' + err);
-                });
-          }
-          if (body.cams) {
-            cams_polling(db, element.ip, body.cams);
-          }
-          if (body.aura) {
-            aura_polling(db, element.ip, body.aura);
-          }
+        if (body.cams) {
+          cams_polling(db, element.ip, body.cams);
+        }
+        if (body.aura) {
+          aura_polling(db, element.ip, body.aura);
         }
       }
-    });
+    }
   });
 }

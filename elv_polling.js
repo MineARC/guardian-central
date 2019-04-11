@@ -12,10 +12,7 @@ function poll() {
         conn.query('SELECT * FROM guardians g JOIN guardian_types gt ON g.type = gt.index WHERE nickname LIKE "elv"')
             .then(rows => { rows.forEach(element => { single(element); }); })
             .catch(console.log)
-            .then(() => {
-              if (conn)
-                conn.end();
-            });
+            .then(conn.end);
       })
       .catch(console.log);
 }
@@ -40,10 +37,7 @@ function single(element) {
                            [ element.ip, body.elv ])
                     .then(console.log)
                     .catch(console.log)
-                    .then(() => {
-                      if (conn)
-                        conn.end();
-                    });
+                    .then(conn.end);
               })
               .catch(console.log);
         }

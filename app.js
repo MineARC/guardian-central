@@ -105,39 +105,41 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended : false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*', (req, res, next) => {
   var hosts = {};
-  db.query('SELECT * FROM guardians')
-      .then(rows => {
-        for (var index = 0; index < rows.length; index++) {
-          var row = rows[index];
-          hosts[index] = {
-            guardian: true,
-            ip: row.ip,
-            hostname: row.name,
-            alias: row.alias,
-            type: row.type,
-            alarms_total: row.alarms_total,
-            alarms_active: {},
-            lastseen: row.lastseen
-          };
-          try {
-            hosts[index].alarms_active = JSON.parse(row.alarms_active);
-          } catch (e) {
-            // JSON Error
-          }
-        }
-        res.locals.hosts = hosts;
-        next();
+  db.getConnection()
+      .then(conn => {
+        conn.query('SELECT * FROM guardians')
+            .then(rows => {
+              for (var index = 0; index < rows.length; index++) {
+                var row = rows[index];
+                hosts[index] = {
+                  guardian : true,
+                  ip : row.ip,
+                  hostname : row.name,
+                  alias : row.alias,
+                  type : row.type,
+                  alarms_total : row.alarms_total,
+                  alarms_active : {},
+                  lastseen : row.lastseen
+                };
+                try {
+                  hosts[index].alarms_active = JSON.parse(row.alarms_active);
+                } catch (e) {
+                  // JSON Error
+                }
+              }
+              res.locals.hosts = hosts;
+            })
+            .catch(console.log)
+            .then(conn.end)
+            .then(next);
       })
-      .catch(err => {
-        console.log('error: ' + err);
-        next();
-      });
+      .catch(console.log);
 });
 
 app.use('/', overview);
@@ -149,9 +151,7 @@ app.use('/settings', settings);
 app.use('/contact', contact);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+app.use(function(req, res, next) { next(createError(404)); });
 
 // error handler
 app.use(function(err, req, res, next) {

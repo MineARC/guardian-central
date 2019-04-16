@@ -6,7 +6,7 @@ $(document).ready(function ($) {
     $.get('/api/hosts/').then(function (data) {
       var fleethtml = '';
       var alertshtml = '';
-      data.hosts.forEach(function (host) {
+      data.forEach(function (host) {
         fleethtml += '<li><a href="/chamber/' + host.hostname + '"><i class="icon-tag"></i><span>' + (host.alias ? host.alias : host.hostname.split('-')[1]) + '</span></a></li>';
         for (var types in host.alarms_active) {
           host.alarms_active[types].forEach(function (alert) {

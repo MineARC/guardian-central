@@ -11,23 +11,29 @@ router.get('/:guardian_id', function(req, res) {
               data['alias'] = id[0].alias;
               data['alarms'] = JSON.parse(id[0].alarms_active);
 
-              var auraPromise = conn.query('SELECT * FROM aura_data WHERE guardian = ? ORDER BY time DESC LIMIT 1', req.params.guardian_id);
-              auraPromise
-                  .then(rows => {
-                    if (rows.length > 0) {
-                      data['aura'] = JSON.parse(rows[0].data);
-                    }
-                  })
-                  .catch(console.log);
+              if (data['alarms']['aura']) {
+                var auraPromise =
+                    conn.query('SELECT * FROM aura_data WHERE guardian = ? ORDER BY time DESC LIMIT 1', req.params.guardian_id);
+                auraPromise
+                    .then(rows => {
+                      if (rows.length > 0) {
+                        data['aura'] = JSON.parse(rows[0].data);
+                      }
+                    })
+                    .catch(console.log);
+              }
 
-              var camsPromise = conn.query('SELECT * FROM cams_data WHERE guardian = ? ORDER BY time DESC LIMIT 1', req.params.guardian_id);
-              camsPromise
-                  .then(rows => {
-                    if (rows.length > 0) {
-                      data['cams'] = JSON.parse(rows[0].data);
-                    }
-                  })
-                  .catch(console.log);
+              if (data['alarms']['cams']) {
+                var camsPromise =
+                    conn.query('SELECT * FROM cams_data WHERE guardian = ? ORDER BY time DESC LIMIT 1', req.params.guardian_id);
+                camsPromise
+                    .then(rows => {
+                      if (rows.length > 0) {
+                        data['cams'] = JSON.parse(rows[0].data);
+                      }
+                    })
+                    .catch(console.log);
+              }
 
               var dataPromise;
               switch (id[0].type) {
@@ -68,29 +74,31 @@ router.get('/history/:guardian_id', function(req, res) {
             .then(id => {
               var history = {};
 
-              var auraPromise =
-                  conn.query('SELECT * FROM aura_data WHERE guardian = ? AND time > NOW() - INTERVAL 1 DAY ORDER BY time DESC',
-                             req.params.guardian_id);
-              auraPromise
-                  .then(rows => {
-                    if (rows.length > 0) {
-                      history['aura'] = [];
-                      for (var index = 0; index < rows.length; index++) {
-                        var row = JSON.parse(rows[index].data)
-                        history['aura'][index] = {};
-                        history['aura'][index].Time = Date.parse(rows[index].time) / 1000;
-                        history['aura'][index].Temp = row.Temp.value
-                        history['aura'][index].Temp_F = row.Temp_F.value
-                        history['aura'][index].Humid = row.Humid.value
-                        history['aura'][index].Press = row.Press.value
-                        history['aura'][index].O2 = row.O2.value
-                        history['aura'][index].CO2 = row.CO2.value
-                        history['aura'][index].CO = row.CO.value
-                        history['aura'][index].H2S = row.H2S.value
+              if (data['alarms']['aura']) {
+                var auraPromise =
+                    conn.query('SELECT * FROM aura_data WHERE guardian = ? AND time > NOW() - INTERVAL 1 DAY ORDER BY time DESC',
+                               req.params.guardian_id);
+                auraPromise
+                    .then(rows => {
+                      if (rows.length > 0) {
+                        history['aura'] = [];
+                        for (var index = 0; index < rows.length; index++) {
+                          var row = JSON.parse(rows[index].data)
+                          history['aura'][index] = {};
+                          history['aura'][index].Time = Date.parse(rows[index].time) / 1000;
+                          history['aura'][index].Temp = row.Temp.value
+                          history['aura'][index].Temp_F = row.Temp_F.value
+                          history['aura'][index].Humid = row.Humid.value
+                          history['aura'][index].Press = row.Press.value
+                          history['aura'][index].O2 = row.O2.value
+                          history['aura'][index].CO2 = row.CO2.value
+                          history['aura'][index].CO = row.CO.value
+                          history['aura'][index].H2S = row.H2S.value
+                        }
                       }
-                    }
-                  })
-                  .catch(console.log);
+                    })
+                    .catch(console.log);
+              }
 
               // var camsPromise = conn.query(
               //     "SELECT * FROM cams_data WHERE guardian = ? AND time > NOW() -

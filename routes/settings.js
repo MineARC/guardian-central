@@ -10,11 +10,11 @@ router.post('/addGuardian', function(req, res, next) {
       .then(conn => {
         conn.query('INSERT INTO guardians (name, ip, type) values (?, ?, ?)', [ value, value, 0 ])
             .then(res.send('Host Added'))
-            .catch(console.log)
-            .then(() => {
-              conn.end();
+            .catch(err => {
+              console.log(err);
               res.send('Invalid information supplied');
-            });
+            })
+            .then(conn.end());
       })
       .catch(console.log);
 });
@@ -23,10 +23,13 @@ router.post('/delGuardian', function(req, res, next) {
   var value = req.body.ip.trim();
   db.getConnection()
       .then(conn => {
-        conn.query('DELETE FROM guardians WHERE ip = ?', value).then(res.send('Host Removed')).catch(console.log).then(() => {
-          conn.end();
-          res.send('Invalid information supplied');
-        });
+        conn.query('DELETE FROM guardians WHERE ip = ?', value)
+            .then(res.send('Host Removed'))
+            .catch(err => {
+              console.log(err);
+              res.send('Invalid information supplied');
+            })
+            .then(conn.end());
       })
       .catch(console.log);
 });

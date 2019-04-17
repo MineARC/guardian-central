@@ -9,27 +9,32 @@ router.get('/:guardian_id', function(req, res, next) {
             .then(id => {
               var data = {};
               data['alias'] = id[0].alias;
+              data['alarms'] = JSON.parse(id[0].alarms_active);
               data['localize'] = 'au';
 
-              var auraPromise =
-                  conn.query('SELECT * FROM aura_data WHERE guardian = ? ORDER BY time DESC LIMIT 1;', req.params.guardian_id);
-              auraPromise
-                  .then(rows => {
-                    if (rows.length > 0) {
-                      data['aura'] = JSON.parse(rows[0].data);
-                    }
-                  })
-                  .catch(console.log);
+              if (data['alarms']['aura']) {
+                var auraPromise =
+                    conn.query('SELECT * FROM aura_data WHERE guardian = ? ORDER BY time DESC LIMIT 1;', req.params.guardian_id);
+                auraPromise
+                    .then(rows => {
+                      if (rows.length > 0) {
+                        data['aura'] = JSON.parse(rows[0].data);
+                      }
+                    })
+                    .catch(console.log);
+              }
 
-              var camsPromise =
-                  conn.query('SELECT * FROM cams_data WHERE guardian = ? ORDER BY time DESC LIMIT 1;', req.params.guardian_id);
-              camsPromise
-                  .then(rows => {
-                    if (rows.length > 0) {
-                      data['cams'] = JSON.parse(rows[0].data);
-                    }
-                  })
-                  .catch(console.log);
+              if (data['alarms']['cams']) {
+                var camsPromise =
+                    conn.query('SELECT * FROM cams_data WHERE guardian = ? ORDER BY time DESC LIMIT 1;', req.params.guardian_id);
+                camsPromise
+                    .then(rows => {
+                      if (rows.length > 0) {
+                        data['cams'] = JSON.parse(rows[0].data);
+                      }
+                    })
+                    .catch(console.log);
+              }
 
               var dataPromise;
               switch (id[0].type) {

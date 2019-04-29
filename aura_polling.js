@@ -1,13 +1,13 @@
 var update_aura = function(db, ip, aura) {
-  db.query(
-        'INSERT INTO aura_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
-        [ip, aura])
-      .then(res => {
-        console.log(res);
+  db.getConnection()
+      .then(conn => {
+        conn.query('INSERT INTO aura_data (guardian, time, data) VALUES ((SELECT name FROM guardians WHERE ip = ?), now(), ?)',
+                   [ ip, aura ])
+            .then(console.log)
+            .catch(console.log)
+            .then(conn.end);
       })
-      .catch(err => {
-        console.log('error: ' + err);
-      });
+      .catch(console.log);
 };
 
 module.exports = update_aura;

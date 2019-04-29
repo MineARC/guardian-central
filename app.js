@@ -17,14 +17,16 @@ var app = express();
 // // State the events
 // autoupdater.on('git-clone', function() {
 //   console.log(
-//       'You have a clone of the repository. Use \'git pull\' to be up-to-date');
+//       'You have a clone of the repository. Use \'git pull\' to be
+//       up-to-date');
 // });
 // autoupdater.on('check.up-to-date', function(v) {
 //   console.info('You have the latest version: ' + v);
 // });
 // autoupdater.on('check.out-dated', function(v_old, v) {
 //   console.warn('Your version is outdated. ' + v_old + ' of ' + v);
-//   autoupdater.fire('download-update');  // If autoupdate: false, you'll have to
+//   autoupdater.fire('download-update');  // If autoupdate: false, you'll have
+//   to
 //                                         // do this manually.
 //   // Maybe ask if the'd like to download the update.
 // });
@@ -34,8 +36,8 @@ var app = express();
 //       'extract');  // If autoupdate: false, you'll have to do this manually.
 // });
 // autoupdater.on('update.not-installed', function() {
-//   console.log('The Update was already in your folder! It\'s read for install');
-//   autoupdater.fire(
+//   console.log('The Update was already in your folder! It\'s read for
+//   install'); autoupdater.fire(
 //       'extract');  // If autoupdate: false, you'll have to do this manually.
 // });
 // autoupdater.on('update.extracted', function() {
@@ -90,6 +92,7 @@ var elv_polling = require('./elv_polling');
 var elvp_polling = require('./elvp_polling');
 var s3_polling = require('./s3_polling');
 var s4_polling = require('./s4_polling');
+var db = require('./database');
 
 app.use(cors());
 app.options('*', cors());
@@ -102,9 +105,42 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended : false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('*', (req, res, next) => {
+  var hosts = {};
+  db.getConnection()
+      .then(conn => {
+        conn.query('SELECT * FROM guardians')
+            .then(rows => {
+              for (var index = 0; index < rows.length; index++) {
+                var row = rows[index];
+                hosts[index] = {
+                  guardian : true,
+                  ip : row.ip,
+                  hostname : row.name,
+                  alias : row.alias,
+                  type : row.type,
+                  alarms_total : row.alarms_total,
+                  alarms_active : {},
+                  lastseen : row.lastseen
+                };
+                try {
+                  hosts[index].alarms_active = JSON.parse(row.alarms_active);
+                } catch (e) {
+                  // JSON Error
+                }
+              }
+              res.locals.hosts = hosts;
+            })
+            .catch(console.log)
+            .then(conn.end)
+            .then(next);
+      })
+      .catch(console.log);
+});
 
 app.use('/', overview);
 app.use('/chamber', chamber);
@@ -115,9 +151,7 @@ app.use('/settings', settings);
 app.use('/contact', contact);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+app.use(function(req, res, next) { next(createError(404)); });
 
 // error handler
 app.use(function(err, req, res, next) {

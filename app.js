@@ -93,6 +93,7 @@ var elvp_polling = require('./elvp_polling');
 var s3_polling = require('./s3_polling');
 var s4_polling = require('./s4_polling');
 var db = require('./database');
+var log = require('./log');
 
 app.use(cors());
 app.options('*', cors());

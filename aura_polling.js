@@ -5,7 +5,7 @@ var update_aura = function(db, ip, aura) {
                    [ ip, aura ])
             .then(console.log)
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 };

@@ -5,7 +5,7 @@ var update_cams = function(db, ip, cams) {
                    [ ip, cams ])
             .then(console.log)
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 };

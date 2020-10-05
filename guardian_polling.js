@@ -10,7 +10,7 @@ function poll() {
         conn.query('SELECT * FROM guardians')
             .then(rows => { rows.forEach(element => { single(element); }); })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 }
@@ -36,7 +36,7 @@ function single(element) {
                         [ body.hostname, body.alias, body.type, body.alarms_total, body.alarms_active, element.ip ])
                     .then(console.log)
                     .catch(console.log)
-                    .then(conn.end);
+                    .then(conn.release);
               })
               .catch(console.log);
         }

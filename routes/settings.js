@@ -14,7 +14,7 @@ router.post('/addGuardian', function(req, res, next) {
               console.log(err);
               res.send('Invalid information supplied');
             })
-            .then(conn.end());
+            .then(conn.release());
       })
       .catch(console.log);
 });
@@ -29,7 +29,7 @@ router.post('/delGuardian', function(req, res, next) {
               console.log(err);
               res.send('Invalid information supplied');
             })
-            .then(conn.end());
+            .then(conn.release());
       })
       .catch(console.log);
 });

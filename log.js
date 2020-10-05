@@ -38,7 +38,7 @@ function write() {
               }
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 
@@ -71,7 +71,7 @@ function write() {
               }
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 
@@ -104,7 +104,7 @@ function write() {
               }
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 
@@ -137,7 +137,7 @@ function write() {
               }
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 
@@ -170,7 +170,7 @@ function write() {
               }
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 
@@ -203,7 +203,7 @@ function write() {
               }
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 
@@ -236,7 +236,7 @@ function write() {
               }
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 }

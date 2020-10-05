@@ -63,7 +63,7 @@ router.get('/:guardian_id', function(req, res, next) {
               Promise.all([ auraPromise, camsPromise, dataPromise ]).then(values => { res.render('home', data); });
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
   ;

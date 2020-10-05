@@ -13,7 +13,7 @@ async function poll() {
         conn.query('SELECT * FROM guardians g JOIN guardian_types gt ON g.type = gt.index WHERE nickname LIKE "battmon"')
             .then(rows => { rows.forEach(element => { single(element); }); })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 }
@@ -38,7 +38,7 @@ function single(element) {
                            [ element.ip, body.battmon ])
                     .then(console.log)
                     .catch(console.log)
-                    .then(conn.end);
+                    .then(conn.release);
               })
               .catch(console.log);
         }

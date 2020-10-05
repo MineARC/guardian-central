@@ -62,7 +62,7 @@ router.get('/:guardian_id', function(req, res) {
               Promise.all([ auraPromise, camsPromise, dataPromise ]).then(values => { res.json(data); });
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 });
@@ -210,7 +210,7 @@ router.get('/history/:guardian_id', function(req, res) {
               Promise.all([ auraPromise, dataPromise ]).then(values => { res.json(history); });
             })
             .catch(console.log)
-            .then(conn.end);
+            .then(conn.release);
       })
       .catch(console.log);
 });

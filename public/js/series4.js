@@ -409,9 +409,11 @@ function updateSeries4(data) {
   $('#readout-temp-battery .value')[0].childNodes[0].nodeValue = data.system_information[4].row_info;
   $('#readout-current-battery .value')[0].childNodes[0].nodeValue = data.system_information[3].row_info;
 
-  $('#readout-temp-internal .easyPieChart').data('easyPieChart').update((data.system_information[5].row_info / 40) * 100);
-  $('#readout-temp-external .easyPieChart').data('easyPieChart').update((data.system_information[6].row_info / 40) * 100);
-  $('#readout-temp-battery .easyPieChart').data('easyPieChart').update((data.system_information[4].row_info / 40) * 100);
+  try {
+    $('#readout-temp-internal .easyPieChart').data('easyPieChart').update((data.system_information[5].row_info / 40) * 100);
+    $('#readout-temp-external .easyPieChart').data('easyPieChart').update((data.system_information[6].row_info / 40) * 100);
+    $('#readout-temp-battery .easyPieChart').data('easyPieChart').update((data.system_information[4].row_info / 40) * 100);
+  } catch (e) {};
 
   series4_voltage_mains_data.push({ x: Date.now() / 1000 | 0, y: parseFloat(data.system_information[0].row_info) });
   series4_voltage_inverter_data.push({ x: Date.now() / 1000 | 0, y: parseFloat(data.system_information[2].row_info) });
@@ -429,11 +431,13 @@ function updateSeries4(data) {
   if (series4_temp_battery_data.length > dataLength) { series4_temp_battery_data.shift(); }
   if (series4_current_battery_data.length > dataLength) { series4_current_battery_data.shift(); }
 
-  series4_voltage_mains_chart.render();
-  series4_voltage_inverter_chart.render();
-  series4_voltage_battery_chart.render();
-  series4_temp_internal_chart.render();
-  series4_temp_external_chart.render();
-  series4_temp_battery_chart.render();
-  series4_current_battery_chart.render();
+  try {
+    series4_voltage_mains_chart.render();
+    series4_voltage_inverter_chart.render();
+    series4_voltage_battery_chart.render();
+    series4_temp_internal_chart.render();
+    series4_temp_external_chart.render();
+    series4_temp_battery_chart.render();
+    series4_current_battery_chart.render();
+  } catch (e) {};
 }

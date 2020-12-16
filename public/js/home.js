@@ -27,15 +27,15 @@ $(document).ready(function($) {
 
 $.get('/api/monitor/history/' + name).then(function(data) {
   if (data.elv)
-    updateELVHistory(data.elv);
+    try {updateELVHistory(data.elv);} catch(e) {};
   if (data.elvp)
-    updateELVPHistory(data.elvp);
+    try {updateELVPHistory(data.elvp);} catch(e) {};
   if (data.series3)
-    updateSeries3History(data.series3);
+    try {updateSeries3History(data.series3);} catch(e) {};
   if (data.series4)
-    updateSeries4History(data.series4);
+    try {updateSeries4History(data.series4);} catch(e) {};
   if (data.aura)
-    updateAuraHistory(data.aura);
+    try {updateAuraHistory(data.aura);} catch(e) {};
   updatefromapi();
 });
 
@@ -45,19 +45,19 @@ setInterval(updatefromapi, 10000);
 function updatefromapi() {
   $.get('/api/monitor/' + name).then(function(data) {
     if (data.elv)
-      updateELV(data.elv);
+      try {updateELV(data.elv);} catch(e) {};
     if (data.elvp)
-      updateELVP(data.elvp);
+      try {updateELVP(data.elvp);} catch(e) {};
     if (data.series3)
-      updateSeries3(data.series3);
+      try {updateSeries3(data.series3);} catch(e) {};
     if (data.series4)
-      updateSeries4(data.series4);
+      try {updateSeries4(data.series4);} catch(e) {};
     if (data.cams)
-      updateCams(data.cams);
+     try {updateCams(data.cams);} catch(e) {};
     if (data.aura)
-      updateAura(data.aura);
+      try {updateAura(data.aura);} catch(e) {};
     if (data.battmon)
-      updateBattmon(data.battmon);
+      try {updateBattmon(data.battmon);} catch(e) {};
     // updateAlarms(data.alarms);
   });
 }

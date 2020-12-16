@@ -243,10 +243,12 @@ function updateAura(data) {
   $('#readout-aura-co2 .value')[0].childNodes[0].nodeValue = co2;
   $('#readout-aura-co .value')[0].childNodes[0].nodeValue = co;
 
-  $('#readout-temp-aura .easyPieChart').data('easyPieChart').update((temp / 40) * 100);
-  $('#readout-aura-o2 .easyPieChart').data('easyPieChart').update(((o2 - 18.5) / 4.5) * 100);
-  $('#readout-aura-co2 .easyPieChart').data('easyPieChart').update(co2 * 100);
-  $('#readout-aura-co .easyPieChart').data('easyPieChart').update((co / 30) * 100);
+  try {
+    $('#readout-temp-aura .easyPieChart').data('easyPieChart').update((temp / 40) * 100);
+    $('#readout-aura-o2 .easyPieChart').data('easyPieChart').update(((o2 - 18.5) / 4.5) * 100);
+    $('#readout-aura-co2 .easyPieChart').data('easyPieChart').update(co2 * 100);
+    $('#readout-aura-co .easyPieChart').data('easyPieChart').update((co / 30) * 100);
+  } catch (e) {};
 
   $('#table-aura .Temp .row-info').text(data['Temp'].value + ' ' + data['Temp'].unit);
   $('#table-aura .Temp_F .row-info').text(data['Temp_F'].value + ' ' + data['Temp_F'].unit);
@@ -269,8 +271,10 @@ function updateAura(data) {
   if (aura_co2_data.length > dataLength) { aura_co2_data.shift(); }
   if (aura_co_data.length > dataLength) { aura_co_data.shift(); }
 
-  aura_temp_chart.render();
-  aura_o2_chart.render();
-  aura_co2_chart.render();
-  aura_co_chart.render();
+  try {
+    aura_temp_chart.render();
+    aura_o2_chart.render();
+    aura_co2_chart.render();
+    aura_co_chart.render();
+  } catch (e) {};
 }

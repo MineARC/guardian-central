@@ -217,10 +217,12 @@ function updateELVP(data) {
   if (elvp_voltage_mains_data.length > dataLength) { elvp_voltage_mains_data.shift(); }
   if (elvp_voltage_inverter_data.length > dataLength) { elvp_voltage_inverter_data.shift(); }
   if (elvp_current_battery_data.length > dataLength) { elvp_current_battery_data.shift(); }
-
-  elvp_voltage_emergency_chart.render();
-  elvp_voltage_standby_chart.render();
-  elvp_voltage_mains_chart.render();
-  elvp_voltage_inverter_chart.render();
-  elvp_current_battery_chart.render();
+  
+  try {
+    elvp_voltage_emergency_chart.render();
+    elvp_voltage_standby_chart.render();
+    elvp_voltage_mains_chart.render();
+    elvp_voltage_inverter_chart.render();
+    elvp_current_battery_chart.render();
+  } catch (e) {};
 }

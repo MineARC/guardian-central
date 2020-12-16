@@ -173,8 +173,10 @@ function updateELV(data) {
   if (elv_voltage_inverter_data.length > dataLength) { elv_voltage_inverter_data.shift(); }
   if (elv_current_battery_data.length > dataLength) { elv_current_battery_data.shift(); }
 
-  elv_voltage_battery_chart.render();
-  elv_voltage_mains_chart.render();
-  elv_voltage_inverter_chart.render();
-  elv_current_battery_chart.render();
+  try {
+    elv_voltage_battery_chart.render();
+    elv_voltage_mains_chart.render();
+    elv_voltage_inverter_chart.render();
+    elv_current_battery_chart.render();
+  } catch (e) {};
 }

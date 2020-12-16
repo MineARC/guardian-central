@@ -398,9 +398,11 @@ function updateSeries3(data) {
   $('#readout-temp-battery .value')[0].childNodes[0].nodeValue = data.raw[4].row_info;
   $('#readout-current-battery .value')[0].childNodes[0].nodeValue = data.raw[8].row_info;
 
-  $('#readout-temp-internal .easyPieChart').data('easyPieChart').update((data.raw[0].row_info / 40) * 100);
-  $('#readout-temp-external .easyPieChart').data('easyPieChart').update((data.raw[2].row_info / 40) * 100);
-  $('#readout-temp-battery .easyPieChart').data('easyPieChart').update((data.raw[4].row_info / 40) * 100);
+  try {
+    $('#readout-temp-internal .easyPieChart').data('easyPieChart').update((data.raw[0].row_info / 40) * 100);
+    $('#readout-temp-external .easyPieChart').data('easyPieChart').update((data.raw[2].row_info / 40) * 100);
+    $('#readout-temp-battery .easyPieChart').data('easyPieChart').update((data.raw[4].row_info / 40) * 100);
+  } catch (e) {};
 
   series3_voltage_inverter_data.push({ x: Date.now() / 1000 | 0, y: parseFloat(data.raw[6].row_info) });
   series3_voltage_bridge_data.push({ x: Date.now() / 1000 | 0, y: parseFloat(data.raw[12].row_info) });
@@ -418,11 +420,13 @@ function updateSeries3(data) {
   if (series3_temp_battery_data.length > dataLength) { series3_temp_battery_data.shift(); }
   if (series3_current_battery_data.length > dataLength) { series3_current_battery_data.shift(); }
 
-  series3_voltage_inverter_chart.render();
-  series3_voltage_bridge_chart.render();
-  series3_voltage_battery_chart.render();
-  series3_temp_internal_chart.render();
-  series3_temp_external_chart.render();
-  series3_temp_battery_chart.render();
-  series3_current_battery_chart.render();
+  try {
+    series3_voltage_inverter_chart.render();
+    series3_voltage_bridge_chart.render();
+    series3_voltage_battery_chart.render();
+    series3_temp_internal_chart.render();
+    series3_temp_external_chart.render();
+    series3_temp_battery_chart.render();
+    series3_current_battery_chart.render();
+  } catch (e) {};
 }
